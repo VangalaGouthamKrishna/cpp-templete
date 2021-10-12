@@ -22,10 +22,10 @@ public:
   YourClass(MosaiqSdk::Intercom::Broker &&broker)
       : MosaiqSdk::CyclicApp{std::move(broker)}, m_integralPub{getBroker().template publish<uint32_t>("cycleCounter")}, m_cycleCount{0}
       // string "cycleCounter" is the topic name which is required to publish or subscribe that particular 
-      // datatype's data and to create a web socket stream
+      // datatype's data and to create web socket stream
       // NOTE: topic name should be unique across the cyclic apps in that machine and
       // topic name cannot be an empty string
-      // NOTE: To subscribe a particular topic, then the topic name and data type of the publisher app should match
+      // NOTE: the subscription of an app must match the datatype and topic name of the publication app
       // Possible datatypes are:
       // "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t",
       // "float", "double", "std::string", "std::vector<std::byte>"
@@ -71,9 +71,9 @@ MOSAIQ_DECLARE_APP(YourClass);
 
 /************************************ sample publisher app templete ************************************/
 
-/* 
+/*
 
-class PublisherApp : public MosaiqSdk::CyclicApp
+ class PublisherApp : public MosaiqSdk::CyclicApp
 {
 public:
   PublisherApp(MosaiqSdk::Intercom::Broker&& broker)
@@ -82,6 +82,10 @@ public:
     , m_integralPub{getBroker().template publish<uint32_t>("cycleCounter")}
     , m_stringPub{getBroker().template publish<std::string>("cycleCounterHex")}
   {}
+
+  void onInitialization()
+  {
+  }
 
   void onCyclicExecution()
   {
@@ -93,22 +97,25 @@ public:
     m_stringPub.write(sstr.str());
   }
 
+  void onExit()
+  {
+  }
+
 private:
   uint32_t m_cycleCount;
   MosaiqSdk::Intercom::Publication<uint32_t> m_integralPub;
   MosaiqSdk::Intercom::Publication<std::string> m_stringPub;
 };
 
-MOSAIQ_DECLARE_APP(PublisherApp);
+MOSAIQ_DECLARE_APP(PublisherApp); 
+
+*/
  
- */
-
-
  /************************************ sample subscriber app templete ************************************/
 
-/* 
+/*
 
-class SubscriberApp : public MosaiqSdk::CyclicApp
+ class SubscriberApp : public MosaiqSdk::CyclicApp
 {
 public:
   SubscriberApp(MosaiqSdk::Intercom::Broker&& broker)
@@ -117,6 +124,10 @@ public:
     , m_integralSub{getBroker().template subscribe<uint32_t>("cycleCounter")}
     , m_stringSub{getBroker().template subscribe<std::string>("cycleCounterHex")}
   {}
+
+  void onInitialization()
+  {
+  }
 
   void onCyclicExecution()
   {
@@ -127,12 +138,16 @@ public:
     m_stringSub.read(strValue);
   }
 
+  void onExit()
+  {
+  }
+
 private:
   uint32_t m_cycleCount;
   MosaiqSdk::Intercom::Subscription<uint32_t> m_integralSub;
   MosaiqSdk::Intercom::Subscription<std::string> m_stringSub;
 };
 
-MOSAIQ_DECLARE_APP(SubscriberApp);
- 
- */
+MOSAIQ_DECLARE_APP(SubscriberApp); 
+
+*/
